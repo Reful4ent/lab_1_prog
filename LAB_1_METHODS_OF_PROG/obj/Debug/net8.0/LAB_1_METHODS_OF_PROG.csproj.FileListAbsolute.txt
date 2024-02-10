@@ -1,0 +1,15 @@
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\bin\Debug\net8.0\LAB_1_METHODS_OF_PROG.exe
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\bin\Debug\net8.0\LAB_1_METHODS_OF_PROG.deps.json
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\bin\Debug\net8.0\LAB_1_METHODS_OF_PROG.runtimeconfig.json
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\bin\Debug\net8.0\LAB_1_METHODS_OF_PROG.dll
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\bin\Debug\net8.0\LAB_1_METHODS_OF_PROG.pdb
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.AssemblyInfoInputs.cache
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.AssemblyInfo.cs
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.csproj.CoreCompileInputs.cache
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.sourcelink.json
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.dll
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\refint\LAB_1_METHODS_OF_PROG.dll
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.pdb
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\LAB_1_METHODS_OF_PROG.genruntimeconfig.cache
+C:\Users\dima2\Desktop\Курсач консоль\LAB_1_METHODS_OF_PROG\LAB_1_METHODS_OF_PROG\obj\Debug\net8.0\ref\LAB_1_METHODS_OF_PROG.dll
