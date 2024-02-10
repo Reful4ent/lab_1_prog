@@ -19,8 +19,8 @@ namespace LAB_1_METHODS_OF_PROG
             this.arraySize=arraySize;
             if(!File.Exists(fileName)) 
             {
-                virtualFile = new FileStream(fileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
-                using StreamWriter stream = new StreamWriter(fileName);
+                virtualFile = File.Open(fileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+                using StreamWriter stream = new StreamWriter(virtualFile);
                 stream.Write('V');
                 stream.Write('M');
             }
