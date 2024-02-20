@@ -8,22 +8,40 @@ namespace LAB_1_METHODS_OF_PROG
 {
     public class VirtualMemory : IDisposable
     {
+        private readonly int bufferSize;
+        private readonly int pageLenght;
+        private readonly int pageBlock;
+        private const int offset = 2;
         protected FileStream? virtualFile { get; set; } = null;
-        protected Page[] pages;
+        protected Page[] Buffer;
         protected string fileName=string.Empty;
         protected long arraySize;
-
-        public VirtualMemory(string fileName, long arraySize)
+        public VirtualMemory(string fileName, long arraySize, int bufferSize = 4, int pageLenght=128)
         {
-            this.fileName=fileName;
-            this.arraySize=arraySize;
-            if(!File.Exists(fileName)) 
+            this.fileName = fileName;
+            this.arraySize = arraySize;
+            this.bufferSize = bufferSize;
+            this.pageLenght = pageLenght;
+            this.pageBlock = pageLenght + pageLenght * sizeof(int);
+
+            long pageCount = (long)Math.Ceiling((decimal)this.arraySize/ this.pageLenght);
+            long size = pageCount * pageLenght;
+
+            if (!File.Exists(fileName)) 
             {
-                virtualFile = File.Open(fileName, FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
-                using StreamWriter stream = new StreamWriter(virtualFile);
-                stream.Write('V');
-                stream.Write('M');
+                virtualFile = new FileStream(fileName,FileMode.CreateNew,FileAccess.ReadWrite);
+                virtualFile.Write(Encoding.UTF8.GetBytes("VM"));
+                byte[] byteArray = new byte[size];
+                virtualFile.Write(byteArray,0, byteArray.Length);
+                virtualFile.Flush();
             }
+            else
+                virtualFile = File.Open(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+
+            Page page = new(0,Array.Empty<byte>(),Array.Empty<int>());
+            Array.Resize(ref Buffer, bufferSize);
+            for (int i = 0; i < bufferSize; i++)
+                Buffer[i] = page;
         }
 
         public void Dispose()
