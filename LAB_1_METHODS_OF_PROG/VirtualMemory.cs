@@ -15,10 +15,10 @@ namespace LAB_1_METHODS_OF_PROG
         private readonly int pageLenght;
         private readonly int pageBlock;
         private const int offset = 2;
-        protected FileStream? virtualFile { get; set; } = null;
-        protected Page[] MemoryBuffer;
-        protected string fileName=string.Empty;
-        protected long arraySize;
+        private FileStream? virtualFile { get; set; } = null;
+        private Page[] MemoryBuffer;
+        private string fileName=string.Empty;
+        private long arraySize;
         public VirtualMemory(string fileName, long arraySize, int bufferSize = 4, int pageLenght=128)
         {
             this.fileName = fileName;
@@ -26,10 +26,9 @@ namespace LAB_1_METHODS_OF_PROG
             this.bufferSize = bufferSize;
             this.pageLenght = pageLenght;
             this.pageBlock = pageLenght + pageLenght * sizeof(int);
-
             long pageCount = (long)Math.Ceiling((decimal)this.arraySize/ this.pageLenght);
             long size = pageCount * pageBlock;
-            Console.WriteLine($"{size},{arraySize},{this.pageLenght},{pageCount},{pageBlock}");
+
             if (!File.Exists(fileName)) 
             {
                 virtualFile = new FileStream(fileName,FileMode.CreateNew,FileAccess.ReadWrite);
@@ -42,35 +41,36 @@ namespace LAB_1_METHODS_OF_PROG
                 virtualFile = File.Open(fileName, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
 
             Page page = new(0,Array.Empty<byte>(),Array.Empty<int>());
+
             Array.Resize(ref MemoryBuffer, this.bufferSize);
+
             for (int i = 0; i < bufferSize; i++)
                 MemoryBuffer[i] = page;
             for (int i = 0; i <= bufferSize; i++)
-            {
                 GetPageByElIndex(i * pageLenght);
-            }
         }
         private void SavePage(ref Page page)
         {
-            
-            virtualFile.Position = page._pageIndex * pageBlock + offset;
-            virtualFile?.Write(page._bitMap, 0, page._bitMap.Length);
-            byte[] pageElements = new byte[page._bitMap.Length * sizeof(int)];
-            Buffer.BlockCopy(page._valuesModelArray,0,pageElements,0,pageElements.Length);
+            byte[] pageElements = new byte[page.BitMap.Length * sizeof(int)];
+            Buffer.BlockCopy(page.ValuesModelArray, 0, pageElements, 0, pageElements.Length);
+
+            virtualFile.Position = page.PageIndex * pageBlock + offset;
+            virtualFile?.Write(page.BitMap, 0, page.BitMap.Length);
             virtualFile?.Write(pageElements, 0, pageElements.Length);
             virtualFile?.Flush();
-            page._recordInMemTime = DateTime.Now;
-            page._pageMode = false;
+
+            page.RecordInMemTime = DateTime.Now;
+            page.PageMode = false;
         }
         public void SaveVirtualMemory()
         {
             for(int i=0; i< MemoryBuffer.Length; i++)
-                if (MemoryBuffer[i]._pageMode)
+                if (MemoryBuffer[i].PageMode)
                     SavePage(ref MemoryBuffer[i]);
         }
         private void ReadPage(Page oldestPage,ref byte[] bitMap, ref byte[] valuesArrayByte)
         {
-            virtualFile.Position = oldestPage._pageIndex * pageBlock + offset;
+            virtualFile.Position = oldestPage.PageIndex * pageBlock + offset;
             virtualFile?.Read(bitMap, 0, bitMap.Length);
             virtualFile?.Read(valuesArrayByte, 0, valuesArrayByte.Length);
             virtualFile?.Flush();
@@ -80,12 +80,14 @@ namespace LAB_1_METHODS_OF_PROG
         {
             int[] array = new int[bytes.Length/sizeof(int)];
             int j = 0;
+
             for(int i=0; i < bytes.Length; i+=4)
             {
-                byte[] temp = [bytes[i], bytes[i+1], bytes[i+2], bytes[i+3]];
-                array[j] = BitConverter.ToInt32(temp, 0);
+                byte[] tmp = [bytes[i], bytes[i+1], bytes[i+2], bytes[i+3]];
+                array[j] = BitConverter.ToInt32(tmp, 0);
                 j++;
             }
+
             return array;
         }
 
@@ -102,20 +104,21 @@ namespace LAB_1_METHODS_OF_PROG
 
             for (int index = 0; index < MemoryBuffer.Length; index++)
             {
-                if (MemoryBuffer[index]._pageIndex == pageNumber)
+                if (MemoryBuffer[index].PageIndex == pageNumber)
                     return index;
             }
             for (int index = 1; index < MemoryBuffer.Length; index++) 
             {
-                if (MemoryBuffer[index]._recordInMemTime < oldestPage._recordInMemTime)
+                if (MemoryBuffer[index].RecordInMemTime < oldestPage.RecordInMemTime)
                 {
                     indexOldestPage = index;
                     oldestPage = MemoryBuffer[index];
                 }
             }
-            if (oldestPage._pageMode)
+            if (oldestPage.PageMode)
                 SavePage(ref oldestPage);
             ReadPage(oldestPage, ref bitMap,ref valuesArrayByte);
+
             int[] valuesArray = ByteToInt(valuesArrayByte);
             MemoryBuffer[indexOldestPage] = new Page(pageNumber, bitMap, valuesArray);
             return indexOldestPage;
@@ -124,30 +127,34 @@ namespace LAB_1_METHODS_OF_PROG
         public bool SetElement(int index, int item)
         {
             long pageIndex = GetPageByElIndex(index) ?? -1;
+
             if (pageIndex < 0)
                 return false;
+
             int address = index % pageLenght;
-            MemoryBuffer[pageIndex]._valuesModelArray[address] = item;
-            MemoryBuffer[pageIndex]._bitMap[address] = 1;
-            MemoryBuffer[pageIndex]._recordInMemTime = DateTime.Now;
-            MemoryBuffer[pageIndex]._pageMode = true;
+            MemoryBuffer[pageIndex].ValuesModelArray[address] = item;
+            MemoryBuffer[pageIndex].BitMap[address] = 1;
+            MemoryBuffer[pageIndex].RecordInMemTime = DateTime.Now;
+            MemoryBuffer[pageIndex].PageMode = true;
             return true;
         }
 
         public bool GetElement(int index, ref int element) 
         {
             long pageIndex = GetPageByElIndex(index) ?? -1;
+
             if (pageIndex < 0)
                 return false;
+
             int address = index % pageLenght;
-            element = MemoryBuffer[pageIndex]._valuesModelArray[address];
+            element = MemoryBuffer[pageIndex].ValuesModelArray[address];
             return true;
         }
 
         public void Dispose()
         {
             SaveVirtualMemory();
-
+            virtualFile?.Close();
             virtualFile?.Dispose();
             GC.SuppressFinalize(this);
         }
