@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -53,11 +54,11 @@ namespace LAB_1_METHODS_OF_PROG
         {
             
             virtualFile.Position = page._pageIndex * pageBlock + offset;
-            virtualFile.Write(page._bitMap, 0, page._bitMap.Length);
+            virtualFile?.Write(page._bitMap, 0, page._bitMap.Length);
             byte[] pageElements = new byte[page._bitMap.Length * sizeof(int)];
             Buffer.BlockCopy(page._valuesModelArray,0,pageElements,0,pageElements.Length);
-            virtualFile.Write(pageElements, 0, pageElements.Length);
-            virtualFile.Flush();
+            virtualFile?.Write(pageElements, 0, pageElements.Length);
+            virtualFile?.Flush();
             page._recordInMemTime = DateTime.Now;
             page._pageMode = false;
         }
@@ -70,9 +71,9 @@ namespace LAB_1_METHODS_OF_PROG
         private void ReadPage(Page oldestPage,ref byte[] bitMap, ref byte[] valuesArrayByte)
         {
             virtualFile.Position = oldestPage._pageIndex * pageBlock + offset;
-            virtualFile.Read(bitMap, 0, bitMap.Length);
-            virtualFile.Read(valuesArrayByte, 0, valuesArrayByte.Length);
-            virtualFile.Flush();
+            virtualFile?.Read(bitMap, 0, bitMap.Length);
+            virtualFile?.Read(valuesArrayByte, 0, valuesArrayByte.Length);
+            virtualFile?.Flush();
         }
 
         private int[] ByteToInt(byte[] bytes)
@@ -87,6 +88,7 @@ namespace LAB_1_METHODS_OF_PROG
             }
             return array;
         }
+
         private long? GetPageByElIndex(long elIndex)
         {
             if (elIndex < 0 || elIndex >= arraySize)
@@ -132,17 +134,22 @@ namespace LAB_1_METHODS_OF_PROG
             return true;
         }
 
-        public bool GetElement(int index) 
+        public bool GetElement(int index, ref int element) 
         {
             long pageIndex = GetPageByElIndex(index) ?? -1;
             if (pageIndex < 0)
                 return false;
-            
+            int address = index % pageLenght;
+            element = MemoryBuffer[pageIndex]._valuesModelArray[address];
+            return true;
         }
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            SaveVirtualMemory();
+
+            virtualFile?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }
