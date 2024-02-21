@@ -15,7 +15,7 @@ namespace LAB_1_METHODS_OF_PROG
         {
             if (pageIndex < 0)
                 throw new Exception("Страница не может быть меньше 0");
-            _pageIndex = pageIndex;
+           _pageIndex = pageIndex;
             _pageMode = false;
             _recordInMemTime = DateTime.Now;
             _bitMap = bitArray;
