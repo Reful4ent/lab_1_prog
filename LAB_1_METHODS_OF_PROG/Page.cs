@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Security.Cryptography.X509Certificates;
-
-namespace LAB_1_METHODS_OF_PROG
+﻿namespace LAB_1_METHODS_OF_PROG
 {
     public struct Page
     {

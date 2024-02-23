@@ -1,33 +1,29 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace LAB_1_METHODS_OF_PROG
 {
     public class VirtualMemory : IDisposable
     {
         private readonly int bufferSize;
-        private readonly int pageLenght;
-        private readonly int pageBlock;
-        private const int offset = 2;
+        private readonly int pageLength;
+        private readonly int pageBlock; //битмап и страницы
+        private const int offset = 2; //сдвиг для "VM"
         private FileStream? virtualFile { get; set; } = null;
         private Page[] MemoryBuffer;
-        private string fileName=string.Empty;
+        private string fileName = string.Empty;
         private long arraySize;
-        public VirtualMemory(string fileName, long arraySize, int bufferSize = 4, int pageLenght=128)
+
+        public VirtualMemory(string fileName, long arraySize, int bufferSize = 4, int pageLength = 128)
         {
             this.fileName = fileName;
             this.arraySize = arraySize;
             this.bufferSize = bufferSize;
-            this.pageLenght = pageLenght;
-            this.pageBlock = pageLenght + pageLenght * sizeof(int);
-            long pageCount = (long)Math.Ceiling((decimal)this.arraySize/ this.pageLenght);
+            this.pageLength = pageLength;
+            this.pageBlock = pageLength + pageLength * sizeof(int);
+            long pageCount = (long)Math.Ceiling((decimal)this.arraySize / this.pageLength);
             long size = pageCount * pageBlock;
+
+            Console.WriteLine($"{arraySize} {bufferSize} {pageLength} {pageBlock} {pageCount} {size}");
 
             if (!File.Exists(fileName)) 
             {
@@ -47,8 +43,9 @@ namespace LAB_1_METHODS_OF_PROG
             for (int i = 0; i < bufferSize; i++)
                 MemoryBuffer[i] = page;
             for (int i = 0; i <= bufferSize; i++)
-                GetPageByElIndex(i * pageLenght);
+                GetPageByElIndex(i * pageLength);
         }
+
         private void SavePage(ref Page page)
         {
             byte[] pageElements = new byte[page.BitMap.Length * sizeof(int)];
@@ -62,13 +59,15 @@ namespace LAB_1_METHODS_OF_PROG
             page.RecordInMemTime = DateTime.Now;
             page.PageMode = false;
         }
+
         public void SaveVirtualMemory()
         {
             for(int i=0; i< MemoryBuffer.Length; i++)
                 if (MemoryBuffer[i].PageMode)
                     SavePage(ref MemoryBuffer[i]);
         }
-        private void ReadPage(Page oldestPage,ref byte[] bitMap, ref byte[] valuesArrayByte)
+
+        private void ReadPage(Page oldestPage, ref byte[] bitMap, ref byte[] valuesArrayByte)
         {
             virtualFile.Position = oldestPage.PageIndex * pageBlock + offset;
             virtualFile?.Read(bitMap, 0, bitMap.Length);
@@ -96,11 +95,11 @@ namespace LAB_1_METHODS_OF_PROG
             if (elIndex < 0 || elIndex >= arraySize)
                 return null;
 
-            long pageNumber = elIndex / pageLenght;
+            long pageNumber = elIndex / pageLength;
             Page oldestPage = MemoryBuffer[0];
             int indexOldestPage = 0;
-            byte[] bitMap = new byte[pageLenght];
-            byte[] valuesArrayByte = new byte[pageLenght * sizeof(int)];
+            byte[] bitMap = new byte[pageLength];
+            byte[] valuesArrayByte = new byte[pageLength * sizeof(int)];
 
             for (int index = 0; index < MemoryBuffer.Length; index++)
             {
@@ -131,7 +130,7 @@ namespace LAB_1_METHODS_OF_PROG
             if (pageIndex < 0)
                 return false;
 
-            int address = index % pageLenght;
+            int address = index % pageLength;
             MemoryBuffer[pageIndex].ValuesModelArray[address] = item;
             MemoryBuffer[pageIndex].BitMap[address] = 1;
             MemoryBuffer[pageIndex].RecordInMemTime = DateTime.Now;
@@ -146,7 +145,7 @@ namespace LAB_1_METHODS_OF_PROG
             if (pageIndex < 0)
                 return false;
 
-            int address = index % pageLenght;
+            int address = index % pageLength;
             element = MemoryBuffer[pageIndex].ValuesModelArray[address];
             return true;
         }
